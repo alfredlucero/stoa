@@ -8,6 +8,7 @@ import PasswordForgetPage from "./pages/PasswordForget";
 import HomePage from "./pages/Home";
 import SearchAppBar from "./components/SearchAppBar";
 import InteractiveList from "./components/InteractiveList";
+import SignOutButton from "./components/SignOutButton";
 // Utils
 import hashHistory from "./utils/hashHistory";
 import { Routes } from "./utils/routes";
@@ -18,6 +19,7 @@ const App = () => {
       <Link to={Routes.Landing}>Landing</Link>
       <Link to={Routes.Login}>Login</Link>
       <Link to={Routes.Signup}>Signup</Link>
+      <SignOutButton />
 
       <Route path={Routes.Landing} component={LandingPage} />
       <Route path={Routes.Login} component={LoginPage} />
