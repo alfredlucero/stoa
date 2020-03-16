@@ -1,7 +1,7 @@
 const electron = require("electron");
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
-
+const ipcMain = electron.ipcMain;
 const path = require("path");
 const isDev = require("electron-is-dev");
 
@@ -12,7 +12,6 @@ function createWindow() {
     width: 900,
     height: 680,
     webPreferences: {
-      // For things like fs modules to work
       nodeIntegration: true,
     },
   });

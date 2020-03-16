@@ -24,3 +24,7 @@ yarn-error.log*
 
 # outputs
 /dist
+
+# environment variables
+.env.development
+.env.production

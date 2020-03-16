@@ -1,12 +1,9 @@
 body {
+  box-sizing: border-box;
   margin: 0;
   font-family: "Roboto", "Helvetica Neue", sans-serif;
   color: #595959;
+  background-color: #efefef;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
 }
