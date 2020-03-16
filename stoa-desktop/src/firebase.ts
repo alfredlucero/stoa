@@ -2,8 +2,6 @@ import React from "react";
 import app from "firebase/app";
 import "firebase/auth";
 
-export const FirebaseContext = React.createContext<null | Firebase>(null);
-
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
   authDomain: process.env.REACT_APP_AUTH_DOMAIN,
@@ -38,4 +36,5 @@ class Firebase {
     this.auth.currentUser?.updatePassword(password);
 }
 
+export const FirebaseContext = React.createContext<null | Firebase>(null);
 export default Firebase;
