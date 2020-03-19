@@ -81,6 +81,9 @@ const LoginPage = () => {
       <p>
         Don't have an account? <Link to={Routes.Login}>Sign Up</Link>
       </p>
+      <p>
+        <Link to={Routes.PasswordForget}>Forgot your password?</Link>
+      </p>
     </div>
   );
 };
