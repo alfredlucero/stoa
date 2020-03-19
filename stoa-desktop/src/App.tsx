@@ -1,32 +1,56 @@
 import React from "react";
-import { Router, Route, Link } from "react-router-dom";
+import { Router } from "react-router-dom";
 // Components
-import LandingPage from "./pages/Landing";
-import LoginPage from "./pages/Login";
-import SignupPage from "./pages/Signup";
-import PasswordForgetPage from "./pages/PasswordForget";
-import HomePage from "./pages/Home";
-import SearchAppBar from "./components/SearchAppBar";
-import InteractiveList from "./components/InteractiveList";
-import SignOutButton from "./components/SignOutButton";
+import AuthRoute from "./components/Routes/AuthRoute";
+import PublicRoute from "./components/Routes/PublicRoute";
+import Navigation from "./components/Navigation";
+// Public Pages
+import LandingPage from "./pages/Public/Landing";
+import LoginPage from "./pages/Public/Login";
+import SignupPage from "./pages/Public/Signup";
+import PasswordForgetPage from "./pages/Public/PasswordForget";
+// Auth Pages
+import HomePage from "./pages/Auth/Home";
+import FilterPage from "./pages/Auth/Filter";
+import ProfilePage from "./pages/Auth/Profile";
+// Auth
+import { useAuth, UserContext } from "./auth";
 // Utils
-import hashHistory from "./utils/hashHistory";
-import { Routes } from "./utils/routes";
+import hashHistory from "./hashHistory";
+import { Routes } from "./routes";
 
 const App = () => {
-  return (
-    <Router history={hashHistory}>
-      <Link to={Routes.Landing}>Landing</Link>
-      <Link to={Routes.Login}>Login</Link>
-      <Link to={Routes.Signup}>Signup</Link>
-      <SignOutButton />
+  const { user } = useAuth();
 
-      <Route path={Routes.Landing} component={LandingPage} />
-      <Route path={Routes.Login} component={LoginPage} />
-      <Route path={Routes.Signup} component={SignupPage} />
-      <Route path={Routes.PasswordForget} component={PasswordForgetPage} />
-      <Route path={Routes.Home} component={HomePage} />
-    </Router>
+  return (
+    <UserContext.Provider value={user}>
+      <Router history={hashHistory}>
+        <Navigation />
+
+        <PublicRoute path={Routes.Landing}>
+          <LandingPage />
+        </PublicRoute>
+        <PublicRoute path={Routes.Login}>
+          <LoginPage />
+        </PublicRoute>
+        <PublicRoute path={Routes.Signup}>
+          <SignupPage />
+        </PublicRoute>
+        <PublicRoute path={Routes.PasswordForget}>
+          <PasswordForgetPage />
+        </PublicRoute>
+
+        <AuthRoute path={Routes.Home}>
+          <HomePage />
+        </AuthRoute>
+        <AuthRoute path={Routes.Filter}>
+          <FilterPage />
+        </AuthRoute>
+        <AuthRoute path={Routes.Profile}>
+          <ProfilePage />
+        </AuthRoute>
+      </Router>
+    </UserContext.Provider>
   );
 };
 

@@ -2,8 +2,8 @@ import React, { useState, useContext } from "react";
 import { Link, useHistory } from "react-router-dom";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { Routes } from "../../utils/routes";
-import { FirebaseContext } from "../../firebase";
+import { Routes } from "../../../routes";
+import { FirebaseContext } from "../../../firebase";
 
 const SignupPage = () => {
   const firebase = useContext(FirebaseContext);

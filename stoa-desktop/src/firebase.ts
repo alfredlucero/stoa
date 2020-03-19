@@ -13,7 +13,7 @@ const config = {
   measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
-class Firebase {
+export class Firebase {
   auth: firebase.auth.Auth;
   constructor() {
     app.initializeApp(config);

@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import Button from "@material-ui/core/Button";
-import { Routes } from "../../utils/routes";
+import { Routes } from "../../routes";
 import { FirebaseContext } from "../../firebase";
 
 const SignOutButton = () => {

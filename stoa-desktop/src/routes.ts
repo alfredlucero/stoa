@@ -4,4 +4,6 @@ export enum Routes {
   Login = "/login",
   Signup = "/signup",
   PasswordForget = "/passwordforget",
+  Filter = "/filter",
+  Profile = "/profile",
 }
