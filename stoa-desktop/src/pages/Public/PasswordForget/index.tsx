@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { FirebaseContext } from "../../../firebase";
+import { FirebaseContext } from "../../../services/firebase";
 
 const PasswordForgetPage = () => {
   const firebase = useContext(FirebaseContext);
@@ -30,7 +30,7 @@ const PasswordForgetPage = () => {
     setIsProcessingPasswordResetEmail(true);
 
     firebase
-      ?.sendPasswordResetEmail(email)
+      .sendPasswordResetEmail(email)
       .then(() => {
         setIsPasswordResetEmailSentSuccess(true);
         setIsPasswordResetEmailSentError(false);

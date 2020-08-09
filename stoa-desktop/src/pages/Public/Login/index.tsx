@@ -3,7 +3,7 @@ import { Link, useHistory } from "react-router-dom";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { Routes } from "../../../routes";
-import { FirebaseContext } from "../../../firebase";
+import { FirebaseContext } from "../../../services/firebase";
 
 const LoginPage = () => {
   const firebase = useContext(FirebaseContext);
@@ -18,13 +18,13 @@ const LoginPage = () => {
     e.preventDefault();
 
     firebase
-      ?.signInWithEmailAndPassword(email, password)
+      .signInWithEmailAndPassword(email, password)
       .then(() => {
         setIsLoggingIn(false);
         setIsLoginError(false);
         history.push(Routes.Home);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Failed to login error: ", error);
         setIsLoggingIn(false);
         setIsLoginError(true);

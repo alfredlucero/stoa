@@ -21,6 +21,7 @@ import { Routes } from "./routes";
 
 const App = () => {
   const { user } = useAuth();
+  console.log("User: ", user);
 
   return (
     <UserContext.Provider value={user}>

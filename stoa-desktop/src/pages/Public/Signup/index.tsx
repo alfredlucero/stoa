@@ -3,7 +3,7 @@ import { Link, useHistory } from "react-router-dom";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { Routes } from "../../../routes";
-import { FirebaseContext } from "../../../firebase";
+import { FirebaseContext } from "../../../services/firebase";
 
 const SignupPage = () => {
   const firebase = useContext(FirebaseContext);
@@ -21,14 +21,14 @@ const SignupPage = () => {
 
     setIsSigningUp(true);
     firebase
-      ?.createUserWithEmailAndPassword(email, password)
-      .then(createdUser => {
+      .createUserWithEmailAndPassword(email, password)
+      .then((createdUser) => {
         console.log("Created user: ", createdUser);
         setIsSigningUp(false);
         setIsSignupError(false);
         history.push(Routes.Home);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Sign up error: ", error);
         setIsSigningUp(false);
         setIsSignupError(true);

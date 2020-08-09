@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Firebase, FirebaseContext } from "./firebase";
+import { Firebase, FirebaseContext } from "./services/firebase";
 
 type AuthUser = firebase.User | null;
 
@@ -29,7 +29,7 @@ export const useAuth = (): UseAuthHook => {
 
     // Unsubscribe to the listener when unmounting
     return () => unsubscribe();
-  }, []);
+  }, [firebase]);
 
   return {
     user,
