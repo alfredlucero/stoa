@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { KeyboardDatePicker } from "@material-ui/pickers";
@@ -23,6 +24,47 @@ const HomePage = () => {
   const handleYesterdayDateChange = (date: MaterialUiPickersDate) => {
     setSelectedYesterdayDate(date);
   };
+
+  const [todayTodos, setTodayTodos] = useState<string[]>([""]);
+  const maxTodayTodos = 10;
+  const onChangeTodayTodo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name: todoIdx, value } = e.currentTarget;
+    const parsedTodoIdx = parseInt(todoIdx, 10);
+    const newTodayTodos = [...todayTodos];
+    newTodayTodos[parsedTodoIdx] = value;
+    setTodayTodos(newTodayTodos);
+  };
+  const onClickAddTodayTodo = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (todayTodos.length < maxTodayTodos) {
+      setTodayTodos([...todayTodos, ""]);
+    }
+  };
+  const onClickDeleteTodayTodo = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const { name: todoIdx } = e.currentTarget;
+    const parsedTodoIdx = parseInt(todoIdx, 10);
+    if (todayTodos.length > 1) {
+      const newTodayTodos = todayTodos.filter((todayTodo, idx) => {
+        return idx !== parsedTodoIdx;
+      });
+      setTodayTodos(newTodayTodos);
+    } else {
+      setTodayTodos([""]);
+    }
+  };
+
+  const [yesterdayUpdates, setYesterdayUpdates] = useState<string[]>([]);
+  const onChangeYesterdayUpdate = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {};
+  const maxYesterdayUpdates = 10;
+
+  const [blockers, setBlockers] = useState<string[]>([]);
+  const onChangeBlocker = (e: React.ChangeEvent<HTMLInputElement>) => {};
+  const maxBlockers = 5;
+
+  const [notes, setNotes] = useState<string[]>([]);
+  const onChangeNote = (e: React.ChangeEvent<HTMLInputElement>) => {};
+  const maxNotes = 5;
 
   // TODO: loading/success/error states for standups
   const [standups, setStandups] = useState<any>([]);
@@ -63,7 +105,36 @@ const HomePage = () => {
             "aria-label": "change date",
           }}
         />
+
         <h3>What do I plan to do today?</h3>
+        {todayTodos.map((todayTodo, idx) => (
+          <Grid key={idx}>
+            <TextField
+              name={`${idx}`}
+              value={todayTodo}
+              type="text"
+              label="Today Todo"
+              onChange={onChangeTodayTodo}
+            />
+            <Button
+              name={`${idx}`}
+              variant="outlined"
+              color="secondary"
+              onClick={onClickDeleteTodayTodo}
+            >
+              Delete
+            </Button>
+          </Grid>
+        ))}
+        <Button
+          variant="outlined"
+          color="primary"
+          disabled={todayTodos.length >= maxTodayTodos}
+          onClick={onClickAddTodayTodo}
+        >
+          Add Todo
+        </Button>
+
         <KeyboardDatePicker
           disableToolbar
           variant="inline"
@@ -80,7 +151,6 @@ const HomePage = () => {
         <h3>What did I do yesterday/last time?</h3>
         <h3>Any blockers?</h3>
         <h3>Any 16th minute items or notes?</h3>
-        <TextField id="email" />
       </form>
       <div>Fetched Standups</div>
       {standups &&
