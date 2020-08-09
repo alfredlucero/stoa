@@ -1,5 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
 import "typeface-roboto";
 import "./index.css";
 import App from "./App";
@@ -7,9 +9,11 @@ import * as serviceWorker from "./serviceWorker";
 import Firebase, { FirebaseContext } from "./services/firebase";
 
 ReactDOM.render(
-  <FirebaseContext.Provider value={new Firebase()}>
-    <App />
-  </FirebaseContext.Provider>,
+  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+    <FirebaseContext.Provider value={new Firebase()}>
+      <App />
+    </FirebaseContext.Provider>
+  </MuiPickersUtilsProvider>,
   document.getElementById("root")
 );
 
