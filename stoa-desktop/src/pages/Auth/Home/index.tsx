@@ -27,7 +27,7 @@ const HomePage = () => {
       console.log("Fetched standups", standups);
       setStandups(standups);
     });
-  }, [firebase]);
+  }, [firebase, user]);
 
   return (
     <div>
@@ -39,13 +39,18 @@ const HomePage = () => {
       {standups &&
         standups.map((standup: any, standupKey: string) => (
           <div key={standupKey}>
-            <p>Today (Some Date)</p>
+            <p>
+              Today (Some Date) {standup.todayTimestamp.toDate().toDateString()}
+            </p>
             {standup.todayTodos.map(
               (todayTodo: string, todayTodoKey: string) => (
                 <p key={todayTodoKey}>{todayTodo}</p>
               )
             )}
-            <p>Yesterday/Last Time</p>
+            <p>
+              Yesterday/Last Time{" "}
+              {standup.yesterdayTimestamp.toDate().toDateString()}
+            </p>
             {standup.yesterdayUpdates.map(
               (yesterdayUpdate: string, yesterdayUpdateKey: string) => (
                 <p key={yesterdayUpdateKey}>{yesterdayUpdate}</p>
