@@ -9,6 +9,9 @@ import { useAuthSession } from "../../../auth";
 import { FirebaseContext } from "../../../services/firebase";
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 
+// BRAINSTORM IDEAS
+// What if we provided a way to say like copy standup and it will be formatted like Today: 1. 2. 3.; Yesterday: * * *?
+// Or what if we can have a button assuming we have Slack integration to click and say output this update to my Slack channel?
 const HomePage = () => {
   const { user } = useAuthSession();
   const firebase = useContext(FirebaseContext);
@@ -146,27 +149,60 @@ const HomePage = () => {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      console.error("Failed to retrieve current authenticated user!");
+      return;
+    }
+    const userId = user.uid;
+    const standupToCreate = {
+      userId,
+      todayTimestamp: selectedTodayDate as Date,
+      yesterdayTimestamp: selectedYesterdayDate as Date,
+      yesterdayUpdates,
+      todayTodos,
+      blockers,
+      notes,
+    };
+    firebase
+      .createStandup(standupToCreate)
+      .then((createdStandup) => {
+        console.log("Document written with ID: ", createdStandup.id);
+        console.log("Created standup", createdStandup);
+        fetchStandups();
+      })
+      .catch(function (error) {
+        console.error("Error adding document: ", error);
+      });
+  };
+
+  const fetchStandups = () => {
+    const userId = (user && user.uid) || "";
+    console.log(user);
+    firebase
+      .getStandups({ userId })
+      .then((querySnapshot) => {
+        const standups: any = [];
+        querySnapshot.forEach((doc) => {
+          console.log(`${doc.id} => ${doc.data()}`);
+          const standup = doc.data();
+          standups.push(standup);
+        });
+        console.log("Fetched standups", standups);
+        setStandups(standups);
+      })
+      .catch(function (error) {
+        console.error("Error fetching standups: ", error);
+      });
   };
 
   useEffect(() => {
-    const userId = (user && user.uid) || "";
-    console.log(user);
-    firebase.getStandups({ userId }).then((querySnapshot) => {
-      const standups: any = [];
-      querySnapshot.forEach((doc) => {
-        console.log(`${doc.id} => ${doc.data()}`);
-        const standup = doc.data();
-        standups.push(standup);
-      });
-      console.log("Fetched standups", standups);
-      setStandups(standups);
-    });
+    fetchStandups();
   }, [firebase, user]);
 
   return (
     <Container maxWidth="lg">
       <form onSubmit={onSubmit}>
-        <h3>What days is our standup covering?</h3>
+        <h3>What days is this standup for?</h3>
         <Grid container spacing={3}>
           <Grid item xs={4}>
             <KeyboardDatePicker

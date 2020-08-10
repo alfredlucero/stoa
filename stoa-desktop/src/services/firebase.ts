@@ -2,7 +2,7 @@ import React from "react";
 import app from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
-import { Standup } from "./standups.interface";
+import { Standup, CreateStandup } from "./standups.interface";
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -76,7 +76,7 @@ export class Firebase {
       .where("userId", "==", userId)
       .get();
 
-  createStandup = (standupToCreate: Omit<Standup, "id">) =>
+  createStandup = (standupToCreate: CreateStandup) =>
     this.db.collection(this.standupCollection).add(standupToCreate);
 
   updateStandup = (updatedStandup: Standup) => {
