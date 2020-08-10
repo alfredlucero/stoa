@@ -23,7 +23,7 @@ const AuthNavigation = () => {
   return (
     <>
       <Link to={Routes.Home}>stoa</Link>
-      <Link to={Routes.Filter}>filter</Link>
+      <Link to={Routes.Standups}>standups</Link>
       <Link to={Routes.Profile}>profile</Link>
       <SignOutButton />
     </>

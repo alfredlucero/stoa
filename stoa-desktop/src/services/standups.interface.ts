@@ -1,10 +1,10 @@
 export interface Standup {
   id: string;
   userId: string;
-  todayTimestamp: Date; // UTC
+  todayTimestamp: firebase.firestore.Timestamp; // UTC
   todayTodos: string[];
   yesterdayUpdates: string[];
-  yesterdayTimestamp: Date; // UTC
+  yesterdayTimestamp: firebase.firestore.Timestamp; // UTC
   blockers: string[];
   notes: string[];
 }

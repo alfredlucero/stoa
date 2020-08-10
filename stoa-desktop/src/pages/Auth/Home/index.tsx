@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useCallback } from "react";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
@@ -175,7 +175,7 @@ const HomePage = () => {
       });
   };
 
-  const fetchStandups = () => {
+  const fetchStandups = useCallback(() => {
     const userId = (user && user.uid) || "";
     console.log(user);
     firebase
@@ -193,11 +193,11 @@ const HomePage = () => {
       .catch(function (error) {
         console.error("Error fetching standups: ", error);
       });
-  };
+  }, [firebase, user]);
 
   useEffect(() => {
     fetchStandups();
-  }, [firebase, user]);
+  }, [fetchStandups]);
 
   return (
     <Container maxWidth="lg">
@@ -388,9 +388,17 @@ const HomePage = () => {
             Add Note
           </Button>
         </Box>
-        <Button variant="contained" color="primary" type="submit">
-          Save Standup
-        </Button>
+        <Box mt={3}>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            size="large"
+            fullWidth
+          >
+            Save Standup
+          </Button>
+        </Box>
       </form>
 
       <div>Fetched Standups</div>

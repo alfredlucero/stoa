@@ -60,6 +60,7 @@ export class Firebase {
     return this.db
       .collection(this.standupCollection)
       .where("userId", "==", userId)
+      .orderBy("todayTimestamp", "desc")
       .get();
   };
 

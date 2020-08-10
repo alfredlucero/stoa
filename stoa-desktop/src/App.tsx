@@ -11,7 +11,7 @@ import SignupPage from "./pages/Public/Signup";
 import PasswordForgetPage from "./pages/Public/PasswordForget";
 // Auth Pages
 import HomePage from "./pages/Auth/Home";
-import FilterPage from "./pages/Auth/Filter";
+import StandupsPage from "./pages/Auth/Standups";
 import ProfilePage from "./pages/Auth/Profile";
 // Auth
 import { useAuth, UserContext } from "./auth";
@@ -44,8 +44,8 @@ const App = () => {
         <AuthRoute path={Routes.Home}>
           <HomePage />
         </AuthRoute>
-        <AuthRoute path={Routes.Filter}>
-          <FilterPage />
+        <AuthRoute path={Routes.Standups}>
+          <StandupsPage />
         </AuthRoute>
         <AuthRoute path={Routes.Profile}>
           <ProfilePage />
