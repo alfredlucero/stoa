@@ -1,4 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
+import Container from "@material-ui/core/Container";
+import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -23,6 +25,39 @@ const HomePage = () => {
   >(new Date());
   const handleYesterdayDateChange = (date: MaterialUiPickersDate) => {
     setSelectedYesterdayDate(date);
+  };
+
+  const [yesterdayUpdates, setYesterdayUpdates] = useState<string[]>([""]);
+  const maxYesterdayUpdates = 10;
+  const onChangeYesterdayUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name: updateIdx, value } = e.currentTarget;
+    const parsedUpdateIdx = parseInt(updateIdx, 10);
+    const newYesterdayUpdates = [...yesterdayUpdates];
+    newYesterdayUpdates[parsedUpdateIdx] = value;
+    setYesterdayUpdates(newYesterdayUpdates);
+  };
+  const onClickAddYesterdayUpdate = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    if (yesterdayUpdates.length < maxYesterdayUpdates) {
+      setYesterdayUpdates([...yesterdayUpdates, ""]);
+    }
+  };
+  const onClickDeleteYesterdayUpdate = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    const { name: updateIdx } = e.currentTarget;
+    const parsedUpdateIdx = parseInt(updateIdx, 10);
+    if (yesterdayUpdates.length > 1) {
+      const newYesterdayUpdates = yesterdayUpdates.filter(
+        (yesterdayUpdate, idx) => {
+          return idx !== parsedUpdateIdx;
+        }
+      );
+      setYesterdayUpdates(newYesterdayUpdates);
+    } else {
+      setYesterdayUpdates([""]);
+    }
   };
 
   const [todayTodos, setTodayTodos] = useState<string[]>([""]);
@@ -52,19 +87,59 @@ const HomePage = () => {
     }
   };
 
-  const [yesterdayUpdates, setYesterdayUpdates] = useState<string[]>([]);
-  const onChangeYesterdayUpdate = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {};
-  const maxYesterdayUpdates = 10;
-
-  const [blockers, setBlockers] = useState<string[]>([]);
-  const onChangeBlocker = (e: React.ChangeEvent<HTMLInputElement>) => {};
+  const [blockers, setBlockers] = useState<string[]>([""]);
   const maxBlockers = 5;
+  const onChangeBlocker = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name: blockerIdx, value } = e.currentTarget;
+    const parsedBlockerIdx = parseInt(blockerIdx, 10);
+    const newBlockers = [...blockers];
+    newBlockers[parsedBlockerIdx] = value;
+    setBlockers(newBlockers);
+  };
+  const onClickAddBlocker = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (blockers.length < maxBlockers) {
+      setBlockers([...blockers, ""]);
+    }
+  };
+  const onClickDeleteBlocker = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const { name: blockerIdx } = e.currentTarget;
+    const parsedBlockerIdx = parseInt(blockerIdx, 10);
+    if (blockers.length > 1) {
+      const newBlockers = blockers.filter((blocker, idx) => {
+        return idx !== parsedBlockerIdx;
+      });
+      setBlockers(newBlockers);
+    } else {
+      setBlockers([""]);
+    }
+  };
 
-  const [notes, setNotes] = useState<string[]>([]);
-  const onChangeNote = (e: React.ChangeEvent<HTMLInputElement>) => {};
+  const [notes, setNotes] = useState<string[]>([""]);
   const maxNotes = 5;
+  const onChangeNote = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name: noteIdx, value } = e.currentTarget;
+    const parsedNoteIdx = parseInt(noteIdx, 10);
+    const newNotes = [...notes];
+    newNotes[parsedNoteIdx] = value;
+    setNotes(newNotes);
+  };
+  const onClickAddNote = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (notes.length < maxNotes) {
+      setNotes([...notes, ""]);
+    }
+  };
+  const onClickDeleteNote = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const { name: noteIdx } = e.currentTarget;
+    const parsedNoteIdx = parseInt(noteIdx, 10);
+    if (notes.length > 1) {
+      const newNotes = notes.filter((note, idx) => {
+        return idx !== parsedNoteIdx;
+      });
+      setNotes(newNotes);
+    } else {
+      setNotes([""]);
+    }
+  };
 
   // TODO: loading/success/error states for standups
   const [standups, setStandups] = useState<any>([]);
@@ -89,69 +164,199 @@ const HomePage = () => {
   }, [firebase, user]);
 
   return (
-    <div>
-      <h2>Home</h2>
+    <Container maxWidth="lg">
       <form onSubmit={onSubmit}>
-        <KeyboardDatePicker
-          disableToolbar
-          variant="inline"
-          format="yyyy/MM/dd"
-          margin="normal"
-          id="date-picker-inline"
-          label="What date is today?"
-          value={selectedTodayDate}
-          onChange={handleTodayDateChange}
-          KeyboardButtonProps={{
-            "aria-label": "change date",
-          }}
-        />
+        <h3>What days is our standup covering?</h3>
+        <Grid container spacing={3}>
+          <Grid item xs={4}>
+            <KeyboardDatePicker
+              disableToolbar
+              variant="inline"
+              format="yyyy/MM/dd"
+              margin="normal"
+              id="date-picker-inline"
+              label="What date was yesterday/last time?"
+              value={selectedYesterdayDate}
+              onChange={handleYesterdayDateChange}
+              KeyboardButtonProps={{
+                "aria-label": "change date",
+              }}
+              fullWidth
+            />
+          </Grid>
+
+          <Grid item xs={4}>
+            <KeyboardDatePicker
+              disableToolbar
+              variant="inline"
+              format="yyyy/MM/dd"
+              margin="normal"
+              id="date-picker-inline"
+              label="What date is today?"
+              value={selectedTodayDate}
+              onChange={handleTodayDateChange}
+              KeyboardButtonProps={{
+                "aria-label": "change date",
+              }}
+              fullWidth
+            />
+          </Grid>
+        </Grid>
+
+        <h3>What did I do yesterday/last time?</h3>
+        {yesterdayUpdates.map((yesterdayUpdate, idx) => (
+          <Grid container spacing={3} key={idx}>
+            <Grid item xs={6}>
+              <TextField
+                name={`${idx}`}
+                value={yesterdayUpdate}
+                type="text"
+                label={`Yesterday's Update #${idx + 1}`}
+                onChange={onChangeYesterdayUpdate}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={3}>
+              <Button
+                name={`${idx}`}
+                variant="outlined"
+                color="secondary"
+                onClick={onClickDeleteYesterdayUpdate}
+                disabled={
+                  yesterdayUpdates.length === 1 && yesterdayUpdates[0] === ""
+                }
+              >
+                Delete
+              </Button>
+            </Grid>
+          </Grid>
+        ))}
+        <Box mt={2}>
+          <Button
+            variant="outlined"
+            color="primary"
+            disabled={yesterdayUpdates.length >= maxYesterdayUpdates}
+            onClick={onClickAddYesterdayUpdate}
+          >
+            Add Update
+          </Button>
+        </Box>
 
         <h3>What do I plan to do today?</h3>
         {todayTodos.map((todayTodo, idx) => (
-          <Grid key={idx}>
-            <TextField
-              name={`${idx}`}
-              value={todayTodo}
-              type="text"
-              label="Today Todo"
-              onChange={onChangeTodayTodo}
-            />
-            <Button
-              name={`${idx}`}
-              variant="outlined"
-              color="secondary"
-              onClick={onClickDeleteTodayTodo}
-            >
-              Delete
-            </Button>
+          <Grid container spacing={3} key={idx}>
+            <Grid item xs={6}>
+              <TextField
+                name={`${idx}`}
+                value={todayTodo}
+                type="text"
+                label={`Today's Todo #${idx + 1}`}
+                onChange={onChangeTodayTodo}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={3}>
+              <Button
+                name={`${idx}`}
+                variant="outlined"
+                color="secondary"
+                onClick={onClickDeleteTodayTodo}
+                disabled={todayTodos.length === 1 && todayTodos[0] === ""}
+              >
+                Delete
+              </Button>
+            </Grid>
           </Grid>
         ))}
-        <Button
-          variant="outlined"
-          color="primary"
-          disabled={todayTodos.length >= maxTodayTodos}
-          onClick={onClickAddTodayTodo}
-        >
-          Add Todo
-        </Button>
+        <Box mt={2}>
+          <Button
+            variant="outlined"
+            color="primary"
+            disabled={todayTodos.length >= maxTodayTodos}
+            onClick={onClickAddTodayTodo}
+          >
+            Add Todo
+          </Button>
+        </Box>
 
-        <KeyboardDatePicker
-          disableToolbar
-          variant="inline"
-          format="yyyy/MM/dd"
-          margin="normal"
-          id="date-picker-inline"
-          label="What date is yesterday/last time?"
-          value={selectedYesterdayDate}
-          onChange={handleYesterdayDateChange}
-          KeyboardButtonProps={{
-            "aria-label": "change date",
-          }}
-        />
-        <h3>What did I do yesterday/last time?</h3>
-        <h3>Any blockers?</h3>
-        <h3>Any 16th minute items or notes?</h3>
+        <h3>Are there any blockers?</h3>
+        {blockers.map((blocker, idx) => (
+          <Grid container spacing={3} key={idx}>
+            <Grid item xs={6}>
+              <TextField
+                name={`${idx}`}
+                value={blocker}
+                type="text"
+                label={`Blocker #${idx + 1}`}
+                onChange={onChangeBlocker}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={3}>
+              <Button
+                name={`${idx}`}
+                variant="outlined"
+                color="secondary"
+                onClick={onClickDeleteBlocker}
+                disabled={blockers.length === 1 && blockers[0] === ""}
+              >
+                Delete
+              </Button>
+            </Grid>
+          </Grid>
+        ))}
+        <Box mt={2}>
+          <Button
+            variant="outlined"
+            color="primary"
+            disabled={blockers.length >= maxBlockers}
+            onClick={onClickAddBlocker}
+          >
+            Add Blocker
+          </Button>
+        </Box>
+
+        <h3>Are there any notes/16th minute items?</h3>
+        {notes.map((note, idx) => (
+          <Grid container spacing={3} key={idx}>
+            <Grid item xs={6}>
+              <TextField
+                name={`${idx}`}
+                value={note}
+                type="text"
+                label={`Note #${idx + 1}`}
+                onChange={onChangeNote}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={3}>
+              <Button
+                name={`${idx}`}
+                variant="outlined"
+                color="secondary"
+                onClick={onClickDeleteNote}
+                disabled={notes.length === 1 && notes[0] === ""}
+              >
+                Delete
+              </Button>
+            </Grid>
+          </Grid>
+        ))}
+        <Box mt={2}>
+          <Button
+            variant="outlined"
+            color="primary"
+            disabled={notes.length >= maxNotes}
+            onClick={onClickAddNote}
+          >
+            Add Note
+          </Button>
+        </Box>
+        <Button variant="contained" color="primary" type="submit">
+          Save Standup
+        </Button>
       </form>
+
       <div>Fetched Standups</div>
       {standups &&
         standups.map((standup: any, standupKey: string) => (
@@ -181,7 +386,7 @@ const HomePage = () => {
             ))}
           </div>
         ))}
-    </div>
+    </Container>
   );
 };
 
