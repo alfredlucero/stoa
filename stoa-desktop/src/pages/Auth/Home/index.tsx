@@ -4,11 +4,12 @@ import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import Card from "@material-ui/core/Card";
 import { KeyboardDatePicker } from "@material-ui/pickers";
 import { useAuthSession } from "../../../auth";
 import { FirebaseContext } from "../../../services/firebase";
+import { Standup } from "../../../services/standups.interface";
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
-
 // BRAINSTORM IDEAS
 // What if we provided a way to say like copy standup and it will be formatted like Today: 1. 2. 3.; Yesterday: * * *?
 // Or what if we can have a button assuming we have Slack integration to click and say output this update to my Slack channel?
@@ -16,6 +17,7 @@ const HomePage = () => {
   const { user } = useAuthSession();
   const firebase = useContext(FirebaseContext);
 
+  // TODO: add in inline validation for checking today date is always after yesterday/last time date
   const [selectedTodayDate, setSelectedTodayDate] = useState<
     MaterialUiPickersDate
   >(new Date());
@@ -30,6 +32,7 @@ const HomePage = () => {
     setSelectedYesterdayDate(date);
   };
 
+  // TODO: create custom hook to encapsulate this list crud
   const [yesterdayUpdates, setYesterdayUpdates] = useState<string[]>([""]);
   const maxYesterdayUpdates = 10;
   const onChangeYesterdayUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,7 +148,7 @@ const HomePage = () => {
   };
 
   // TODO: loading/success/error states for standups
-  const [standups, setStandups] = useState<any>([]);
+  const [standups, setStandups] = useState<Standup[]>([]);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -181,10 +184,10 @@ const HomePage = () => {
     firebase
       .getStandups({ userId })
       .then((querySnapshot) => {
-        const standups: any = [];
+        const standups: Standup[] = [];
         querySnapshot.forEach((doc) => {
           console.log(`${doc.id} => ${doc.data()}`);
-          const standup = doc.data();
+          const standup: Standup = doc.data() as Standup;
           standups.push(standup);
         });
         console.log("Fetched standups", standups);
@@ -402,36 +405,51 @@ const HomePage = () => {
       </form>
 
       <div>Fetched Standups</div>
-      {standups &&
-        standups.map((standup: any, standupKey: string) => (
-          <div key={standupKey}>
-            <p>
-              Today (Some Date) {standup.todayTimestamp.toDate().toDateString()}
-            </p>
-            {standup.todayTodos.map(
-              (todayTodo: string, todayTodoKey: string) => (
-                <p key={todayTodoKey}>{todayTodo}</p>
-              )
-            )}
-            <p>
-              Yesterday/Last Time{" "}
-              {standup.yesterdayTimestamp.toDate().toDateString()}
-            </p>
-            {standup.yesterdayUpdates.map(
-              (yesterdayUpdate: string, yesterdayUpdateKey: string) => (
-                <p key={yesterdayUpdateKey}>{yesterdayUpdate}</p>
-              )
-            )}
-            {standup.blockers.map((blocker: string, blockerKey: string) => (
-              <p key={blockerKey}>{blocker}</p>
-            ))}
-            {standup.notes.map((note: string, noteKey: string) => (
-              <p key={noteKey}>{note}</p>
-            ))}
-          </div>
-        ))}
+      {standups.map((standup: Standup, standupIdx: number) => (
+        <div key={standupIdx}>
+          <p>
+            Today (Some Date) {standup.todayTimestamp.toDate().toDateString()}
+          </p>
+          {standup.todayTodos.map((todayTodo: string, todayTodoIdx: number) => (
+            <p key={todayTodoIdx}>{todayTodo}</p>
+          ))}
+          <p>
+            Yesterday/Last Time{" "}
+            {standup.yesterdayTimestamp.toDate().toDateString()}
+          </p>
+          {standup.yesterdayUpdates.map(
+            (yesterdayUpdate: string, yesterdayUpdateIdx: number) => (
+              <p key={yesterdayUpdateIdx}>{yesterdayUpdate}</p>
+            )
+          )}
+          {standup.blockers.map((blocker: string, blockerIdx: number) => (
+            <p key={blockerIdx}>{blocker}</p>
+          ))}
+          {standup.notes.map((note: string, noteIdx: number) => (
+            <p key={noteIdx}>{note}</p>
+          ))}
+        </div>
+      ))}
     </Container>
   );
+};
+
+interface StandupCardProps {
+  standup: Standup;
+  onAddTodayTodoToStandupForm: (todayTodo: string) => void;
+  onAddYesterdayUpdateToStandupForm: (yesterdayUpdate: string) => void;
+  onAddBlockerToStandupForm: (blocker: string) => void;
+  onAddNoteToStandupForm: (note: string) => void;
+}
+
+const StandupCard: React.FC<StandupCardProps> = ({
+  standup,
+  onAddTodayTodoToStandupForm,
+  onAddYesterdayUpdateToStandupForm,
+  onAddBlockerToStandupForm,
+  onAddNoteToStandupForm,
+}) => {
+  return <div>Standup Card</div>;
 };
 
 export default HomePage;
