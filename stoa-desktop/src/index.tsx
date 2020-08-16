@@ -7,11 +7,17 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import Firebase, { FirebaseContext } from "./services/firebase";
+import {
+  initializeSlackWebClient,
+  SlackWebClientContext,
+} from "./services/slack";
 
 ReactDOM.render(
   <MuiPickersUtilsProvider utils={DateFnsUtils}>
     <FirebaseContext.Provider value={new Firebase()}>
-      <App />
+      <SlackWebClientContext.Provider value={initializeSlackWebClient()}>
+        <App />
+      </SlackWebClientContext.Provider>
     </FirebaseContext.Provider>
   </MuiPickersUtilsProvider>,
   document.getElementById("root")

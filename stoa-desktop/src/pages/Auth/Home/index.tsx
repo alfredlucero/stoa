@@ -10,6 +10,8 @@ import { useAuthSession } from "../../../auth";
 import { FirebaseContext } from "../../../services/firebase";
 import { Standup } from "../../../services/standups.interface";
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
+import { SlackWebClientContext } from "../../../services/slack";
+
 // BRAINSTORM IDEAS
 // What if we provided a way to say like copy standup and it will be formatted like Today: 1. 2. 3.; Yesterday: * * *?
 // Or what if we can have a button assuming we have Slack integration to click and say output this update to my Slack channel?
@@ -202,8 +204,33 @@ const HomePage = () => {
     fetchStandups();
   }, [fetchStandups]);
 
+  const slackWebClient = useContext(SlackWebClientContext);
+  // Get channel id from url: https://app.slack.com/client/T0193FJN9GC/C018XG4NCTD/details/top
+  // CXXX....
+  const standupsTestChannelId = "C018XG4NCTD";
+
+  const onClickPostSlackUpdate = async () => {
+    try {
+      const result = await slackWebClient.chat.postMessage({
+        text: "Hello world!",
+        channel: standupsTestChannelId,
+        // as_user: true,
+      });
+
+      // The result contains an identifier for the message, `ts`.
+      console.log(
+        `Successfully send message ${result.ts} in conversation ${standupsTestChannelId}`
+      );
+    } catch (e) {
+      console.error("Failed to send message to channel!");
+    }
+  };
+
   return (
     <Container maxWidth="lg">
+      <Button variant="outlined" onClick={onClickPostSlackUpdate}>
+        Post Slack Update
+      </Button>
       <form onSubmit={onSubmit}>
         <h3>What days is this standup for?</h3>
         <Grid container spacing={3}>
