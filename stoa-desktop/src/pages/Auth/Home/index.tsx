@@ -226,10 +226,36 @@ const HomePage = () => {
     }
   };
 
+  const onClickPostDiscordUpdate = () => {
+    const discordWebhookUrl = process.env.REACT_APP_DISCORD_WEBHOOK_URL || "";
+
+    fetch(discordWebhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: "Alfred",
+        content: `Today:\n\`\`\`* 1\n* 2\n* 3\n\`\`\`Yesterday:\`\`\`* 1\n* 2\n* 3\n\`\`\``,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Succeeded to send discrod update");
+        }
+
+        throw new Error("Failed to send discrod update!");
+      })
+      .catch((e) => console.error("Failed to send discord update", e));
+  };
+
   return (
     <Container maxWidth="lg">
       <Button variant="outlined" onClick={onClickPostSlackUpdate}>
         Post Slack Update
+      </Button>
+      <Button variant="outlined" onClick={onClickPostDiscordUpdate}>
+        Post Discord Update
       </Button>
       <form onSubmit={onSubmit}>
         <h3>What days is this standup for?</h3>
