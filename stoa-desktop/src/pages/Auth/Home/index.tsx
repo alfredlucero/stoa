@@ -4,14 +4,18 @@ import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import Card from "@material-ui/core/Card";
+import Paper from "@material-ui/core/Paper";
+import Dialog from "@material-ui/core/Dialog";
 import { KeyboardDatePicker } from "@material-ui/pickers";
+import CopyToClipboard from "react-copy-to-clipboard";
 import { useAuthSession } from "../../../auth";
 import { FirebaseContext } from "../../../services/firebase";
 import { Standup } from "../../../services/standups.interface";
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 import { SlackWebClientContext } from "../../../services/slack";
-
+{
+  /* <Paper elevation={3} /> */
+}
 // BRAINSTORM IDEAS
 // What if we provided a way to say like copy standup and it will be formatted like Today: 1. 2. 3.; Yesterday: * * *?
 // Or what if we can have a button assuming we have Slack integration to click and say output this update to my Slack channel?
@@ -249,6 +253,22 @@ const HomePage = () => {
       .catch((e) => console.error("Failed to send discord update", e));
   };
 
+  const [isStandupPreviewModalOpen, setIsStandupPreviewModalOpen] = useState(
+    false
+  );
+  const onClickShowStandupPreviewModal = () => {
+    setIsStandupPreviewModalOpen(true);
+  };
+  const onCloseStandupPreviewModal = () => {
+    setIsStandupPreviewModalOpen(false);
+  };
+  const standupPreview = {
+    yesterdayUpdates,
+    todayTodos,
+    blockers,
+    notes,
+  };
+
   return (
     <Container maxWidth="lg">
       <Button variant="outlined" onClick={onClickPostSlackUpdate}>
@@ -257,6 +277,16 @@ const HomePage = () => {
       <Button variant="outlined" onClick={onClickPostDiscordUpdate}>
         Post Discord Update
       </Button>
+      <Button variant="outlined" onClick={onClickShowStandupPreviewModal}>
+        Preview Standup
+      </Button>
+
+      <StandupPreviewModal
+        standupPreview={standupPreview}
+        isOpen={isStandupPreviewModalOpen}
+        onClose={onCloseStandupPreviewModal}
+      />
+
       <form onSubmit={onSubmit}>
         <h3>What days is this standup for?</h3>
         <Grid container spacing={3}>
@@ -503,6 +533,160 @@ const StandupCard: React.FC<StandupCardProps> = ({
   onAddNoteToStandupForm,
 }) => {
   return <div>Standup Card</div>;
+};
+
+interface StandupPreviewModalProps {
+  standupPreview: StandupPreview;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+interface StandupPreview {
+  yesterdayUpdates: string[];
+  todayTodos: string[];
+  blockers: string[];
+  notes: string[];
+}
+
+/*
+  Expanded version
+
+  Yesterday:
+  • Did some thing yesterday...
+
+  Today:
+  • Do some things today...
+
+  Blockers:
+  • Things blocking us...
+
+  16th:
+  • 16th minute items...
+
+  Compressed version
+
+  Y: Did some things yesterday...
+  T: Do some things today...
+  B: Things blocking us...
+  16th: 16th minute items...
+*/
+const StandupPreviewModal: React.FC<StandupPreviewModalProps> = ({
+  standupPreview,
+  isOpen,
+  onClose,
+}) => {
+  const yesterdayUpdates = standupPreview.yesterdayUpdates.filter(
+    (yesterdayUpdate) => yesterdayUpdate
+  );
+  const todayTodos = standupPreview.todayTodos.filter((todayTodo) => todayTodo);
+  const blockers = standupPreview.blockers.filter((blocker) => blocker);
+  const notes = standupPreview.notes.filter((note) => note);
+
+  const expandedStandupText = `Yesterday:\n${yesterdayUpdates
+    .map((yesterdayUpdate) => `• ${yesterdayUpdate}\n`)
+    .join("")}Today:\n${todayTodos
+    .map((todayTodo) => `• ${todayTodo}\n`)
+    .join("")}${
+    blockers.length > 0
+      ? "Blockers:\n" + blockers.map((blocker) => `• ${blocker}\n`).join("")
+      : ""
+  }${
+    notes.length > 0
+      ? "16th Minute Items:\n" + notes.map((note) => `• ${note}\n`).join("")
+      : ""
+  }`;
+  const [isExpandedStandupCopied, setIsExpandedStandupCopied] = useState(false);
+  const onCopyExpandedStandup = () => {
+    setIsExpandedStandupCopied(true);
+    setTimeout(() => {
+      setIsExpandedStandupCopied(false);
+    }, 1000);
+  };
+
+  const compressedStandupText = `Y: ${yesterdayUpdates.join(
+    ", "
+  )}\nT: ${todayTodos.join(", ")}${
+    blockers.length > 0 ? "\nB: " + blockers.join(", ") : ""
+  }${notes.length > 0 ? "\n16th: " + notes.join(", ") : ""}`;
+  const [isCompressedStandupCopied, setIsCompressedStandupCopied] = useState(
+    false
+  );
+  const onCopyCompressedStandup = () => {
+    setIsCompressedStandupCopied(true);
+    setTimeout(() => {
+      setIsCompressedStandupCopied(false);
+    }, 1000);
+  };
+
+  return (
+    <Dialog open={isOpen} onClose={onClose}>
+      <div>
+        <p>
+          Preview your Standup and Copy and Paste it your chat application
+          channel such as one in Slack, Discord, or Microsoft Teams.
+        </p>
+
+        <h3>Expanded Standup</h3>
+        <CopyToClipboard
+          text={expandedStandupText}
+          onCopy={onCopyExpandedStandup}
+        >
+          <Button variant="outlined">
+            {isExpandedStandupCopied && <>Copied Expanded Standup!</>}
+            {!isExpandedStandupCopied && <>Copy Expanded Standup</>}
+          </Button>
+        </CopyToClipboard>
+        <Paper elevation={3}>
+          <>
+            <p>Yesterday:</p>
+            {yesterdayUpdates.map((yesterdayUpdate, idx) => (
+              <p key={idx}>• {yesterdayUpdate}</p>
+            ))}
+            <p>Today:</p>
+            {todayTodos.map((todayTodo, idx) => (
+              <p key={idx}>• {todayTodo}</p>
+            ))}
+            {blockers.length > 0 && (
+              <>
+                <p>Blockers:</p>
+                {blockers.map((blocker, idx) => (
+                  <p key={idx}>• {blocker}</p>
+                ))}
+              </>
+            )}
+
+            {notes.length > 0 && (
+              <>
+                <p>16th Minute Items:</p>
+                {notes.map((note, idx) => (
+                  <p key={idx}>• {note}</p>
+                ))}
+              </>
+            )}
+          </>
+        </Paper>
+
+        <h3>Compressed Standup</h3>
+        <CopyToClipboard
+          text={compressedStandupText}
+          onCopy={onCopyCompressedStandup}
+        >
+          <Button variant="outlined">
+            {isCompressedStandupCopied && <>Copied Compressed Standup!</>}
+            {!isCompressedStandupCopied && <>Copy Compressed Standup</>}
+          </Button>
+        </CopyToClipboard>
+        <Paper elevation={3}>
+          <>
+            <p>Y: {yesterdayUpdates.join(", ")}</p>
+            <p>T: {todayTodos.join(", ")}</p>
+            {blockers.length > 0 && <p>B: {blockers.join(", ")}</p>}
+            {notes.length > 0 && <p>16th: {notes.join(", ")}</p>}
+          </>
+        </Paper>
+      </div>
+    </Dialog>
+  );
 };
 
 export default HomePage;
